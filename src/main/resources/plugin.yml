@@ -1,0 +1,8 @@
+name: VaultPlugin
+version: '1.0-SNAPSHOT'
+main: zaman.plugin.vault.MainVaultPlugin
+api-version: '1.21'
+commands:
+  게임:
+    description: 금고 열기 게임 시작 명령어
+    usage: /게임 <시작/종료> <x,z최소> <x,z최대>
