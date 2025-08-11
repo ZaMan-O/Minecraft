@@ -49,6 +49,6 @@ processResources {
 }
 
 tasks.jar {
-    archiveFileName = 'DWPlugin.jar'
+    archiveFileName = 'VaultPlugin.jar'
     destinationDirectory = file('C:\\Users\\roble\\Documents\\zaman_plugin')
 }

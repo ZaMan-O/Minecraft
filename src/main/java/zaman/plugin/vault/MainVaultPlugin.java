@@ -1,10 +1,18 @@
 package zaman.plugin.vault;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import zaman.plugin.vault.command.GameStartCommand;
 import zaman.plugin.vault.compass.keyCompassSetting;
+import zaman.plugin.vault.key.InGameKey;
 
 public final class MainVaultPlugin extends JavaPlugin implements Listener {
     private boolean gameStatus = false;
@@ -22,7 +30,7 @@ public final class MainVaultPlugin extends JavaPlugin implements Listener {
 
     public void startGame() {
         this.gameStatus = true;
-        keyCompassSetting compassSetting = new keyCompassSetting();
+        keyCompassSetting compassSetting = new keyCompassSetting(this);
         compassSetting.setCompass(key_m,key_x);
     }
 
@@ -35,5 +43,63 @@ public final class MainVaultPlugin extends JavaPlugin implements Listener {
         getCommand("게임").setExecutor(new GameStartCommand(this));
         getLogger().info("VaultPlugin enabled");
         Bukkit.getPluginManager().registerEvents(this, this);
+        Bukkit.getPluginManager().registerEvents(new InGameKey(), this);
+    }
+
+    @EventHandler
+    public void compassClick(InventoryClickEvent event) {
+        if(isGameStarted() && event.getSlot() == 8) {
+            ItemStack item = event.getCurrentItem();
+            if(item.getType().equals(Material.COMPASS)) {
+                ItemMeta meta = item.getItemMeta();
+                if(meta.hasDisplayName()) {
+                    String displayName = meta.getDisplayName();
+                    if(displayName.equals("§e열쇠 위치 나침반")) {
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void compassDrop(PlayerDropItemEvent event) {
+        if(isGameStarted()) {
+            ItemStack item = event.getItemDrop().getItemStack();
+            if(item.getType().equals(Material.COMPASS)) {
+                ItemMeta meta = item.getItemMeta();
+                if(meta.hasDisplayName()) {
+                    String displayName = meta.getDisplayName();
+                    if(displayName.equals("§e열쇠 위치 나침반")) {
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void compassSwap(PlayerSwapHandItemsEvent event) {
+        if(isGameStarted()) {
+            ItemStack mainItem = event.getMainHandItem();
+            ItemStack offItem = event.getOffHandItem();
+            if(mainItem.getType().equals(Material.COMPASS)) {
+                ItemMeta meta = mainItem.getItemMeta();
+                if(meta.hasDisplayName()) {
+                    String displayName = meta.getDisplayName();
+                    if(displayName.equals("§e열쇠 위치 나침반")) {
+                        event.setCancelled(true);
+                    }
+                }
+            } else if(offItem.getType().equals(Material.COMPASS)) {
+                ItemMeta meta = offItem.getItemMeta();
+                if(meta.hasDisplayName()) {
+                    String displayName = meta.getDisplayName();
+                    if(displayName.equals("§e열쇠 위치 나침반")) {
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
     }
 }
