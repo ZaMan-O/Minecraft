@@ -11,17 +11,27 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import zaman.plugin.vault.command.GameStartCommand;
-import zaman.plugin.vault.compass.keyCompassSetting;
+import zaman.plugin.vault.compass.KeyCompassSetting;
 import zaman.plugin.vault.key.InGameKey;
+import zaman.plugin.vault.key.KeyInMapSystem;
 
 public final class MainVaultPlugin extends JavaPlugin implements Listener {
     private boolean gameStatus = false;
-    private Integer key_m;
-    private Integer key_x;
+    public Integer key_m;
+    public Integer key_x;
+
+    public int x;
+    public int z;
 
     public void setKeySpawnXZ(Integer key_m, Integer key_x) {
         this.key_m = key_m;
         this.key_x = key_x;
+    }
+
+    public void setKeySpawnPosition(Integer key_x, Integer key_z) {
+        this.x = key_x;
+        this.z = key_z;
+        getLogger().info("x와 z : " + this.x + this.z);
     }
 
     public boolean isGameStarted() {
@@ -30,8 +40,10 @@ public final class MainVaultPlugin extends JavaPlugin implements Listener {
 
     public void startGame() {
         this.gameStatus = true;
-        keyCompassSetting compassSetting = new keyCompassSetting(this);
-        compassSetting.setCompass(key_m,key_x);
+        KeyCompassSetting compassSetting = new KeyCompassSetting(this);
+        compassSetting.setCompass();
+
+        KeyInMapSystem keyInMapSystem = new KeyInMapSystem(this);
     }
 
     public void endGame() {
@@ -43,9 +55,10 @@ public final class MainVaultPlugin extends JavaPlugin implements Listener {
         getCommand("게임").setExecutor(new GameStartCommand(this));
         getLogger().info("VaultPlugin enabled");
         Bukkit.getPluginManager().registerEvents(this, this);
-        Bukkit.getPluginManager().registerEvents(new InGameKey(), this);
+        Bukkit.getPluginManager().registerEvents(new InGameKey(this), this);
     }
 
+    // 나침반 버리기 방지
     @EventHandler
     public void compassClick(InventoryClickEvent event) {
         if(isGameStarted() && event.getSlot() == 8) {

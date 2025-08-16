@@ -11,27 +11,28 @@ import zaman.plugin.vault.MainVaultPlugin;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class keyCompassSetting implements Listener {
+public class KeyCompassSetting implements Listener {
     private final MainVaultPlugin plugin;
 
-    public keyCompassSetting(MainVaultPlugin plugin) {
+    public KeyCompassSetting(MainVaultPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public void setCompass(Integer key_m, Integer key_x) {
+    public void setCompass() {
         ItemStack compass = new ItemStack(Material.COMPASS);
         CompassMeta meta = (CompassMeta)compass.getItemMeta();
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
 
-        int x = random.nextInt(key_m,key_x);
-        int z = random.nextInt(key_m,key_x);
+        int x = random.nextInt(plugin.key_m, plugin.key_x);
+        int z = random.nextInt(plugin.key_m, plugin.key_x);
         
         boolean random_1 = random.nextBoolean();
         boolean random_2 = random.nextBoolean();
 
         if(random_1) { x = -x; }
         if(random_2) { z = -z; }
+        plugin.setKeySpawnPosition(x, z);
 
         plugin.getLogger().info(String.format("상자 스폰 위치\nx = %d\nz = %d", x, z));
 
