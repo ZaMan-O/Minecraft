@@ -1,7 +1,12 @@
 package zaman.plugin.vault;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Vault;
+import org.bukkit.entity.Interaction;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -23,6 +28,11 @@ public final class MainVaultPlugin extends JavaPlugin implements Listener {
     public int x;
     public int z;
 
+    public ItemDisplay keyDisplay;
+    public Interaction keyInteraction;
+
+    public ItemStack keyItem;
+
     public void setKeySpawnXZ(Integer key_m, Integer key_x) {
         this.key_m = key_m;
         this.key_x = key_x;
@@ -31,7 +41,11 @@ public final class MainVaultPlugin extends JavaPlugin implements Listener {
     public void setKeySpawnPosition(Integer key_x, Integer key_z) {
         this.x = key_x;
         this.z = key_z;
-        getLogger().info("x와 z : " + this.x + this.z);
+    }
+
+    public void setKeyEntity(ItemDisplay keyDisplay, Interaction keyInteraction) {
+        this.keyDisplay = keyDisplay;
+        this.keyInteraction = keyInteraction;
     }
 
     public boolean isGameStarted() {
@@ -44,6 +58,7 @@ public final class MainVaultPlugin extends JavaPlugin implements Listener {
         compassSetting.setCompass();
 
         KeyInMapSystem keyInMapSystem = new KeyInMapSystem(this);
+        keyInMapSystem.spawnKey();
     }
 
     public void endGame() {
@@ -113,6 +128,19 @@ public final class MainVaultPlugin extends JavaPlugin implements Listener {
                     }
                 }
             }
+        }
+    }
+
+    public void processVaultsInChunk(Chunk chunk) {
+        for (BlockState state : chunk.getTileEntities()) {
+            if (!(state instanceof Vault vault)) continue;
+
+            ItemStack currentKey = vault.getKeyItem();
+            if (currentKey != null && currentKey.isSimilar(keyItem)) continue;
+
+            vault.setKeyItem(keyItem.clone());
+
+            vault.update(true, true);
         }
     }
 }

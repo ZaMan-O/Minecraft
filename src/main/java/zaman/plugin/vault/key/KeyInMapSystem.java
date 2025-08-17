@@ -19,33 +19,32 @@ public class KeyInMapSystem {
         int x = plugin.x;
         int z = plugin.z;
         Location loc = new Location(world,x,0,z);
+        Location loc2 = new Location(world,x,-0.75,z);
 
-        Location cloc = new Location(world, x + 0.5, 0, z + 0.5); // 블록 중앙에 맞추기
-        // 청크 로드
-        if (!cloc.getChunk().isLoaded()) {
-            cloc.getChunk().load(true);
-        }
-
+        plugin.getLogger().info("아이템 디스플레이 소환중..");
         ItemDisplay keyDisplay = world.spawn(
-                cloc, ItemDisplay.class, entity -> {
+                loc, ItemDisplay.class, entity -> {
                     entity.setItemStack(new ItemStack(Material.TRIPWIRE_HOOK));
                     entity.setGlowing(true);
                     entity.setPersistent(true);
                     entity.setCustomNameVisible(false);
-                    entity.addScoreboardTag("key");
 
                     Transformation transformation = entity.getTransformation();
-                    transformation.getScale().set(1.5f,1.5f,1.5f);
+                    transformation.getScale().set(2.0f,2.0f,2.0f);
                     entity.setTransformation(transformation);
                 }
         );
+        plugin.getLogger().info("아이템 디스플레이 소환 완료!");
+        plugin.getLogger().info("인터렉션 소환중..");
         Interaction keyInteraction = world.spawn(
-                cloc, Interaction.class, entity -> {
-                    entity.setInteractionHeight(2.0f);
-                    entity.setInteractionWidth(2.0f);
+                loc2, Interaction.class, entity -> {
+                    entity.setInteractionHeight(1.5f);
+                    entity.setInteractionWidth(1.5f);
                     entity.setPersistent(true);
-                    entity.addScoreboardTag("keyInteraction");
                 }
         );
+        plugin.getLogger().info("인터렉션 소환 완료!");
+
+        plugin.setKeyEntity(keyDisplay, keyInteraction);
     }
 }
