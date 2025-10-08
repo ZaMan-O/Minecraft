@@ -143,7 +143,7 @@ public class InGameKey implements Listener {
 
             @Override
             public void run() {
-                if (count >= 15) {
+                if (count >= 25) {
                     cancel();
                     return;
                 }
