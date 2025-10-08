@@ -6,3 +6,6 @@ commands:
   게임:
     description: 금고 열기 게임 시작 명령어
     usage: /게임 <시작/종료> <x,z최소> <x,z최대>
+  stovo:
+    description: .
+    usage: /stovo <ㅇㅇ>
