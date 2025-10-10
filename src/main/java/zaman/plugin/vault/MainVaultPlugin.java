@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import zaman.plugin.vault.command.CanVaultOpen;
 import zaman.plugin.vault.command.GameStartCommand;
+import zaman.plugin.vault.command.GettingKeyCommand;
 import zaman.plugin.vault.compass.KeyCompassSetting;
 import zaman.plugin.vault.key.InGameKey;
 import zaman.plugin.vault.key.KeyInMapSystem;
@@ -79,6 +80,15 @@ public final class MainVaultPlugin extends JavaPlugin implements Listener {
         this.havingKeyPlayer = null;
         this.keyStatus = false;
         this.keyLocation = null;
+        this.keyItem = null;
+
+        ItemStack key = new ItemStack(Material.TRIPWIRE_HOOK);
+        ItemMeta meta = key.getItemMeta();
+        meta.setDisplayName("§e금고 열쇠");
+        meta.setEnchantmentGlintOverride(true);
+        key.setItemMeta(meta);
+        this.keyItem = key;
+
         KeyCompassSetting compassSetting = new KeyCompassSetting(this);
         compassSetting.setCompass();
 
@@ -94,12 +104,14 @@ public final class MainVaultPlugin extends JavaPlugin implements Listener {
         this.havingKeyPlayer = null;
         this.keyStatus = false;
         this.keyLocation = null;
+        this.keyItem = null;
     }
 
     @Override
     public void onEnable() {
         getCommand("게임").setExecutor(new GameStartCommand(this));
         getCommand("stovo").setExecutor(new CanVaultOpen(this));
+        getCommand("키지급").setExecutor(new GettingKeyCommand(this));
         getLogger().info("VaultPlugin enabled");
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new InGameKey(this), this);

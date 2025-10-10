@@ -9,3 +9,6 @@ commands:
   stovo:
     description: .
     usage: /stovo <ㅇㅇ>
+  키지급:
+    description: 엄청난 오류 방지를 위한 열쇠 지급
+    usage: /키지급

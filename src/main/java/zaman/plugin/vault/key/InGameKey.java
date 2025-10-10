@@ -38,21 +38,14 @@ public class InGameKey implements Listener {
         World world = Bukkit.getWorld("world");
         Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
-        if (entity instanceof Interaction && entity.equals(plugin.keyInteraction)) {
+        if (entity instanceof Interaction && (entity.getUniqueId().equals(plugin.keyInteraction.getUniqueId()) || entity.getScoreboardTags().contains("thisiskey"))) {
             if (!plugin.keyStatus) {
                 event.setCancelled(true);
                 player.sendTitle("§e열쇠를 얻으셨습니다!", "§6목표 : 금고 열기", 10, 40, 10);
                 player.playSound(player.getLocation(), Sound.BLOCK_TRIAL_SPAWNER_EJECT_ITEM, 0.65F, 1);
                 plugin.havingKeyPlayer = player;
 
-                ItemStack key = new ItemStack(Material.TRIPWIRE_HOOK);
-                ItemMeta meta = key.getItemMeta();
-                meta.setDisplayName("§e금고 열쇠");
-                meta.setEnchantmentGlintOverride(true);
-                key.setItemMeta(meta);
-
-                plugin.keyItem = key;
-                player.getInventory().addItem(key);
+                player.getInventory().addItem(plugin.keyItem);
 
                 plugin.keyDisplay.remove();
                 plugin.keyInteraction.remove();
@@ -62,7 +55,7 @@ public class InGameKey implements Listener {
                         p.sendTitle("§c열쇠를 누가 가져갔습니다!", "§e빠르게 쫓아가세요!", 5, 60, 5);
                         p.sendMessage("§c열쇠를 누가 가져갔습니다! §e빠르게 쫓아가세요!");
                     }
-                    player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 0.25f, 0.5f);
+                    p.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 0.25f, 0.5f);
                     p.getInventory().setItem(8, new ItemStack(Material.AIR));
                 }
             } else {
@@ -82,14 +75,18 @@ public class InGameKey implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            p.sendMessage(ChatColor.RED + "누군가 죽었다.");
+        }
         Player player = event.getEntity();
         if (player.equals(plugin.havingKeyPlayer)) {
             player.getInventory().removeItem(plugin.keyItem);
 
-            World world = Bukkit.getWorld("world");
+            World world = player.getWorld();
             Location loc = player.getLocation();
             Location loc2 = player.getLocation().clone().add(0, -0.75, 0);
             plugin.keyLocation = loc;
+            loc.getChunk().load(true);
 
             plugin.getLogger().info("아이템 디스플레이 소환중..");
             ItemDisplay keyDisplay = world.spawn(
@@ -111,6 +108,7 @@ public class InGameKey implements Listener {
                         entity.setInteractionHeight(1.5f);
                         entity.setInteractionWidth(1.5f);
                         entity.setPersistent(true);
+                        entity.addScoreboardTag("thisiskey");
                     }
             );
             plugin.getLogger().info("인터렉션 소환 완료!");

@@ -28,7 +28,11 @@ public class TargetingPlayer implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-                if(!player.getWorld().equals(plugin.havingKeyPlayer.getWorld())) {
+                World world = null;
+                if(plugin.keyStatus) world = plugin.keyLocation.getWorld();
+                else world = plugin.havingKeyPlayer.getWorld();
+
+                if(!player.getWorld().equals(world)) {
                     player.sendMessage(ChatColor.RED + "열쇠를 가진 플레이어가 다른 차원에 있습니다.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                     event.setCancelled(true);
